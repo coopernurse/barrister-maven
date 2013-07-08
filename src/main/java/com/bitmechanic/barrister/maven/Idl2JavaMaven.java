@@ -41,7 +41,7 @@ public class Idl2JavaMaven extends AbstractMojo {
      * Comma separated list of IDL filenames. If the name is a directory, all
      * files ending in .idl contained in that directory will be processed.
      *
-     * @parameter expression="${idl2java.idlFiles}" default-value="${basedir}/src/main/resources/idl/"
+     * @parameter expression="${idl2java.idlFiles}" default-value="${basedir}/src/main/resources/barrister/"
      */
     private String idlFiles;
 
@@ -75,7 +75,6 @@ public class Idl2JavaMaven extends AbstractMojo {
      */
     private String projectDir;
 
-    @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         basePackage = sanitizeForJava(basePackage);
 
@@ -360,7 +359,6 @@ public class Idl2JavaMaven extends AbstractMojo {
             t.start();
         }
 
-        @Override
         public void run() {
             String s;
             try {
