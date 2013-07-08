@@ -116,8 +116,10 @@ public class Idl2JavaMaven extends AbstractMojo {
 
     private Set<String> excludeFiles() {
         HashSet<String> set = new HashSet<String>();
-        for (String fname : this.exclude.split(",")) {
-            set.add(fname);
+        if (this.exclude != null) {
+            for (String fname : this.exclude.split(",")) {
+                set.add(fname);
+            }
         }
         return set;
     }
