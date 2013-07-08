@@ -48,6 +48,7 @@ Add to your `pom.xml`:
 
 The following config options are available:
 
+~~~
 Element             | Default                        | Notes
 `<barristerScript>` | barrister                      | Either a path to the Python Barrister translation script, or the URL to the hosted service
 `<idlFiles>`        | src/main/resources/barrister   | Comma separated paths to IDL files. Directories will have all *.idl files included.
@@ -56,6 +57,7 @@ Element             | Default                        | Notes
 `<outputDirectory>` | src/main/java                  | Base output directory to generate source code to into
 `<immutable>`       | false                          | If true, generated Java struct classes will be immutable (no setters, arrays are cloned on read)
 `<clean>`           | false                          | If true, the outputDirectory+basePackage will be recursively deleted before translation to remove artifacts from previous invocation
+~~~
 
 Once you have your project configured, I highly recommend adding `<clean>true</clean>` to ensure you don't have orphaned
 .java files from previous runs on disk.  It is disabled by default simply to prevent you from accidentally wiping out your
