@@ -62,6 +62,25 @@ Once you have your project configured, I highly recommend adding `<clean>true</c
 .java files from previous runs on disk.  It is disabled by default simply to prevent you from accidentally wiping out your
 source tree.
 
+## FAQ
+
+*What's this `<barristerScript>` business?  Do I need Python to run this?*
+
+Barrister IDL specifies a grammar for defining data structures and interfaces.  The `.idl` text files
+are translated to a JSON representation that all the various language bindings understand.
+
+The IDL translator is written in Python, and is available at
+[coopernurse/barrister](https://github.com/coopernurse/barrister)
+
+It is recommended that you install the command line translator, but if you don't want to then you can
+use the hosted translator by setting:
+
+`<barristerScript>http://barrister.bitmechanic.com/run</barristerScript>`
+
+Note: I provide no uptime guarantees for the hosted translator.  So please don't rely on it for any
+critical build processes.  But it's quite useful when you're trying Barrister out for the first time.
+
+
 ## See also
 
 * http://barrister.bitmechanic.com/ - the main Barrister RPC site
