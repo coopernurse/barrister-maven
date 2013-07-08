@@ -69,29 +69,38 @@ public class Idl2JavaMaven extends AbstractMojo {
     private String basePackage;
 
     /**
-     * @parameter expression="${basedir}"
-     * @required
-     * @readonly
+     * Base source directory to write .java files to
+     *
+     * @parameter expression="${idl2java.outputDirectory}" default-value="${basedir}/src/main/java"
      */
-    private String projectDir;
+    private String outputDirectory;
+
+    /**
+     * If true, the base directory: outputDirectory + basePackage will be cleaned (all files removed, recursively)
+     *
+     * @parameter expression="${idl2java.clean}" default-value="false"
+     */
+    private String clean;
+
+    private File outputDirectoryPlusPackage;
 
     public void execute() throws MojoExecutionException, MojoFailureException {
         basePackage = sanitizeForJava(basePackage);
 
-        File jsonDir = sourceFile("resources/"+basePackageDir());
-
-        getLog().info("Cleaning target JSON resource dir: " + jsonDir);
-        if (jsonDir.exists()) {
-            delete(jsonDir);
+        outputDirectoryPlusPackage = new File((outputDirectory + File.separator + basePackageDir()).replace("/", File.separator));
+        if (cleanBool()) {
+            getLog().info("Cleaning output dir: " + outputDirectoryPlusPackage);
+            if (outputDirectoryPlusPackage.exists()) {
+                delete(outputDirectoryPlusPackage);
+            }
         }
-        jsonDir.mkdirs();
-
-        File javaDir = sourceFile("java/" + basePackageDir());
-        getLog().info("Cleaning target Java source dir: " + javaDir);
-        if (javaDir.exists()) {
-            delete(javaDir);
+        else {
+            getLog().info("Using output dir: " + outputDirectoryPlusPackage + " - consider setting <clean>true</clean> to ensure this directory is clean on build");
         }
-        javaDir.mkdirs();
+
+        if (!outputDirectoryPlusPackage.isDirectory() && !outputDirectoryPlusPackage.mkdirs()) {
+            throw new MojoExecutionException("Unable to create base output directory: " + outputDirectoryPlusPackage);
+        }
 
         getLog().info("Using Barrister script: " + barristerScript);
 
@@ -123,9 +132,6 @@ public class Idl2JavaMaven extends AbstractMojo {
             frag = frag.replace("/", File.separator);
 
             File fileOrDir = new File(frag);
-            if (!fileOrDir.exists()) {
-                fileOrDir = sourceFile(frag);
-            }
             if (!fileOrDir.exists()) {
                 throw new MojoExecutionException("File not found: " + frag);
             }
@@ -161,16 +167,12 @@ public class Idl2JavaMaven extends AbstractMojo {
         }
     }
 
-    private File sourceFile(String relPath) {
-        return new File(projectDir, ("src/main/" + relPath).replace("/", File.separator));
-    }
-
     private String basePackageDir() {
-        return basePackage.replace(".", "/");
+        return basePackage.replace(".", "/").replace("/", File.separator);
     }
 
     private void translateIdlToJava(File idlFile) throws IOException, MojoExecutionException {
-        File jsonFile = sourceFile("resources/"+basePackageDir()+"/"+(idlFile.getName().replace(".idl", ".json")));
+        File jsonFile = new File(outputDirectoryPlusPackage, idlFile.getName().replace(".idl", ".json"));
         jsonFile.getParentFile().mkdirs();
 
         getLog().info("Translating: " + idlFile + " to: " + jsonFile);
@@ -181,7 +183,7 @@ public class Idl2JavaMaven extends AbstractMojo {
             new com.bitmechanic.barrister.Idl2Java(jsonFile.getAbsolutePath(),
                     idlFileToBasePackage(idlFile.getName()),
                     basePackage,
-                    "src/main/java".replace("/", File.separator),
+                    outputDirectory,
                     immutableBool());
         }
         catch (Exception e) {
@@ -226,6 +228,10 @@ public class Idl2JavaMaven extends AbstractMojo {
 
     private boolean immutableBool() {
         return this.immutable != null && this.immutable.trim().equals("true");
+    }
+
+    private boolean cleanBool() {
+        return this.clean != null && this.clean.trim().equals("true");
     }
 
     private void delete(File f) throws MojoExecutionException {
