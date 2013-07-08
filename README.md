@@ -50,6 +50,7 @@ The following config options are available:
 
 ~~~
 Element             | Default                        | Notes
+--------------------|--------------------------------|------
 `<barristerScript>` | barrister                      | Either a path to the Python Barrister translation script, or the URL to the hosted service
 `<idlFiles>`        | src/main/resources/barrister   | Comma separated paths to IDL files. Directories will have all *.idl files included.
 `<exclude>`         | (none)                         | Comma separated file names to exclude from translation. Wild cards are not currently supported.
