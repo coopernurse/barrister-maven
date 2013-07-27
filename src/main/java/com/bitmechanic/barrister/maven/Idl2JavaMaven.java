@@ -76,23 +76,30 @@ public class Idl2JavaMaven extends AbstractMojo {
     private String outputDirectory;
 
     /**
+     * Base source directory to write .json files to
+     *
+     * @parameter expression="${idl2java.outputResourcesDirectory}" default-value="${basedir}/src/main/resources"
+     */
+    private String outputResourcesDirectory;
+
+    /**
      * If true, the base directory: outputDirectory + basePackage will be cleaned (all files removed, recursively)
      *
      * @parameter expression="${idl2java.clean}" default-value="false"
      */
     private String clean;
 
-    private File outputDirectoryPlusPackage;
+    private File outputDirectoryPlusPackage, outputResourcesDirectoryPlusPackage;
 
     public void execute() throws MojoExecutionException, MojoFailureException {
         basePackage = sanitizeForJava(basePackage);
 
         outputDirectoryPlusPackage = new File((outputDirectory + File.separator + basePackageDir()).replace("/", File.separator));
+        outputResourcesDirectoryPlusPackage = new File((outputResourcesDirectory + File.separator + basePackageDir()).replace("/", File.separator));
         if (cleanBool()) {
             getLog().info("Cleaning output dir: " + outputDirectoryPlusPackage);
-            if (outputDirectoryPlusPackage.exists()) {
-                delete(outputDirectoryPlusPackage);
-            }
+            delete(outputDirectoryPlusPackage);
+            delete(outputResourcesDirectoryPlusPackage);
         }
         else {
             getLog().info("Using output dir: " + outputDirectoryPlusPackage + " - consider setting <clean>true</clean> to ensure this directory is clean on build");
@@ -100,6 +107,9 @@ public class Idl2JavaMaven extends AbstractMojo {
 
         if (!outputDirectoryPlusPackage.isDirectory() && !outputDirectoryPlusPackage.mkdirs()) {
             throw new MojoExecutionException("Unable to create base output directory: " + outputDirectoryPlusPackage);
+        }
+        if (!outputResourcesDirectoryPlusPackage.isDirectory() && !outputResourcesDirectoryPlusPackage.mkdirs()) {
+            throw new MojoExecutionException("Unable to create base output resources directory: " + outputResourcesDirectoryPlusPackage);
         }
 
         getLog().info("Using Barrister script: " + barristerScript);
@@ -174,7 +184,7 @@ public class Idl2JavaMaven extends AbstractMojo {
     }
 
     private void translateIdlToJava(File idlFile) throws IOException, MojoExecutionException {
-        File jsonFile = new File(outputDirectoryPlusPackage, idlFile.getName().replace(".idl", ".json"));
+        File jsonFile = new File(outputResourcesDirectoryPlusPackage, idlFile.getName().replace(".idl", ".json"));
         jsonFile.getParentFile().mkdirs();
 
         getLog().info("Translating: " + idlFile + " to: " + jsonFile);
@@ -186,14 +196,15 @@ public class Idl2JavaMaven extends AbstractMojo {
                     idlFileToBasePackage(idlFile.getName()),
                     basePackage,
                     outputDirectory,
-                    immutableBool());
+                    allImmutableBool(),
+                    immutableSubstr());
         }
         catch (Exception e) {
             throw new MojoExecutionException("Error running idl2java with params: " + jsonFile.getAbsolutePath() +
                     idlFileToBasePackage(idlFile.getName()) +
                     basePackage +
                     "src/main/java".replace("/", File.separator) +
-                    immutableBool(), e);
+                    allImmutableBool(), e);
         }
     }
 
@@ -228,8 +239,18 @@ public class Idl2JavaMaven extends AbstractMojo {
         return s.replaceAll("[^A-Za-z0-9_\\.]", "");
     }
 
-    private boolean immutableBool() {
+    private boolean allImmutableBool() {
         return this.immutable != null && this.immutable.trim().equals("true");
+    }
+
+    private List<String> immutableSubstr() {
+        List<String> list = new ArrayList<String>();
+        if (immutable != null) {
+            for (String s : immutable.split(",")) {
+                list.add(s);
+            }
+        }
+        return list;
     }
 
     private boolean cleanBool() {
@@ -237,7 +258,7 @@ public class Idl2JavaMaven extends AbstractMojo {
     }
 
     private void delete(File f) throws MojoExecutionException {
-        if (f.isDirectory()) {
+        if (f.exists() && f.isDirectory()) {
             for (File child : f.listFiles()) {
                 delete(child);
             }

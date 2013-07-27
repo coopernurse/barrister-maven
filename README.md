@@ -55,7 +55,7 @@ Element             | Default                        | Notes
 `<exclude>`         | (none)                         | Comma separated file names to exclude from translation. Wild cards are not currently supported.
 `<basePackage>`     | $groupId.$artifactId.generated | Base Java package for generated .java files - each IDL file will be a sub-package from this root
 `<outputDirectory>` | src/main/java                  | Base output directory to generate source code to into
-`<immutable>`       | false                          | If true, generated Java struct classes will be immutable (no setters, arrays are cloned on read)
+`<immutable>`       | <empty>                        | If "true", all generated Java struct classes will be immutable (no setters, arrays are cloned on read). If not true, value is considered to be a comma separated list of package substrings to make immutable.
 `<clean>`           | false                          | If true, the outputDirectory+basePackage will be recursively deleted before translation to remove artifacts from previous invocation
 
 Once you have your project configured, I highly recommend adding `<clean>true</clean>` to ensure you don't have orphaned
