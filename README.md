@@ -12,7 +12,7 @@ Add to your `pom.xml`:
               <!-- These three properties are boilerplate -->
               <groupId>com.bitmechanic</groupId>
               <artifactId>barrister-maven-plugin</artifactId>
-              <version>1.0-SNAPSHOT</version>
+              <version>0.1.13</version>
 
               <!-- Your configuration options here -->
               <configuration>
