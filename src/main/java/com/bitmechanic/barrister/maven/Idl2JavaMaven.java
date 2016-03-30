@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Author: James Cooper <james@bitmechanic.com>
+ * Author: James Cooper - james@bitmechanic.com
  * Date: 7/4/13
  *
  * @goal idl2java
