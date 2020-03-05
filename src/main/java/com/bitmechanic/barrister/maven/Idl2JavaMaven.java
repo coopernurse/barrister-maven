@@ -33,7 +33,7 @@ public class Idl2JavaMaven extends AbstractMojo {
     /**
      * Path to barrister Python script
      *
-     * @parameter expression="${idl2java.barristerScript}" default-value="barrister"
+     * @parameter property="idl2java.barristerScript" default-value="barrister"
      */
     private String barristerScript;
 
@@ -41,21 +41,21 @@ public class Idl2JavaMaven extends AbstractMojo {
      * Comma separated list of IDL filenames. If the name is a directory, all
      * files ending in .idl contained in that directory will be processed.
      *
-     * @parameter expression="${idl2java.idlFiles}" default-value="${basedir}/src/main/resources/barrister/"
+     * @parameter property="idl2java.idlFiles" default-value="${basedir}/src/main/resources/barrister/"
      */
     private String idlFiles;
 
     /**
      * Comma separated list of filenames to exclude.
      *
-     * @parameter expression="${idl2java.exclude}"
+     * @parameter property="idl2java.exclude"
      */
     private String exclude;
 
     /**
      * If true, generated struct classes will be immutable
      *
-     * @parameter expression="${idl2java.immutable}" default-value="false"
+     * @parameter property="idl2java.immutable" default-value="false"
      */
     private String immutable;
 
@@ -64,28 +64,28 @@ public class Idl2JavaMaven extends AbstractMojo {
      * Each IDL file will be generated into a separate package under this base package
      * based on the IDL filename.
      *
-     * @parameter expression="${idl2java.basePackage}" default-value="${project.groupId}.${project.artifactId}.generated"
+     * @parameter property="idl2java.basePackage" default-value="${project.groupId}.${project.artifactId}.generated"
      */
     private String basePackage;
 
     /**
      * Base source directory to write .java files to
      *
-     * @parameter expression="${idl2java.outputDirectory}" default-value="${basedir}/src/main/java"
+     * @parameter property="idl2java.outputDirectory" default-value="${basedir}/src/main/java"
      */
     private String outputDirectory;
 
     /**
      * Base source directory to write .json files to
      *
-     * @parameter expression="${idl2java.outputResourcesDirectory}" default-value="${basedir}/src/main/resources"
+     * @parameter property="idl2java.outputResourcesDirectory" default-value="${basedir}/src/main/resources"
      */
     private String outputResourcesDirectory;
 
     /**
      * If true, the base directory: outputDirectory + basePackage will be cleaned (all files removed, recursively)
      *
-     * @parameter expression="${idl2java.clean}" default-value="false"
+     * @parameter property="idl2java.clean" default-value="false"
      */
     private String clean;
 
